@@ -1,0 +1,47 @@
+toolsets = vs2012;
+
+vs2012.option.ClCompile.RuntimeLibrary = MultiThreaded;
+
+win32-subsystem=windows;
+
+
+program mypeg {
+    configurations = Debug Release;
+
+    sources {
+        src/mypeg.cpp
+    }
+
+    includedirs = include;
+
+    includedirs += ../ffmpeg;
+    includedirs += ../ffmpeg/libavcodec;
+    includedirs += ../ffmpeg/libavdevice;
+    includedirs += ../ffmpeg/libavfilter;
+    includedirs += ../ffmpeg/libavformat;
+    includedirs += ../ffmpeg/libavresample;
+    includedirs += ../ffmpeg/libavutil;
+    includedirs += ../ffmpeg/libpostproc;
+    includedirs += ../ffmpeg/libswresample;
+    includedirs += ../ffmpeg/libswscale;  
+    
+    includedirs += ../msinttypes;
+            
+    libdirs = ../ffmpeg/libavcodec;
+    libdirs += ../ffmpeg/libavdevice;
+    libdirs += ../ffmpeg/libavfilter;
+    libdirs += ../ffmpeg/libavformat;
+    libdirs += ../ffmpeg/libavresample;
+    libdirs += ../ffmpeg/libavutil;
+    libdirs += ../ffmpeg/libpostproc;
+    libdirs += ../ffmpeg/libswresample;
+    libdirs += ../ffmpeg/libswscale;
+    
+    libs = libavcodec;
+    libs += libavdevice;
+    libs += libavfilter;
+    libs += libavformat;
+    libs += libavutil;
+    libs += libswresample;
+    libs += libswscale;
+}
