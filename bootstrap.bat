@@ -19,8 +19,6 @@ echo Utils
 echo movealib
 echo moveliba
 echo To rename a to lib and vice versa
-echo c99convh
-echo To convert all .h files to c89
 echo.
 echo For 64bit builds using vs express 2010 install:
 echo http://www.microsoft.com/en-us/download/details.aspx?id=8279
@@ -162,7 +160,6 @@ goto :EOF
     
 goto STARTMSYS
 
-
 :ARCH64
   if not exist "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" (
     echo Windows SDK not found
@@ -184,8 +181,6 @@ echo alias movelink="mv /usr/bin/link /usr/bin/oldlink" >> ffmpeg\.profile
 echo alias movelinkback="mv /usr/bin/oldlink /usr/bin/link" >> ffmpeg\.profile
 echo alias movealib="find . -name *.a | sed -e 'p;s/\.a$/.lib/' | xargs -n2 mv" >> ffmpeg\.profile
 echo alias moveliba="find . -name *.lib | sed -e 'p;s/\.lib$/.a/' | xargs -n2 mv" >> ffmpeg\.profile
-echo alias c99convh="find . -name *.h | sed -e 'p;' | xargs -n2 c99conv" >> ffmpeg\.profile
-
 
 set INCLUDE=%CD%\msinttypes;%INCLUDE%
 set PATH=%PATH%;%CD%\yasm%ARCH%;%CD%\c99-to-c89

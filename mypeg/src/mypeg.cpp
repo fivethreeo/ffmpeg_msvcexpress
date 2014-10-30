@@ -1,13 +1,10 @@
 /*
 
 */
-
 #include "windows.h"
 
-extern "C" {
-#include <avcodec.h>
-#include <avformat.h>
-}
+#include "avcodec.h"
+#include "avformat.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,7 +14,7 @@ extern "C" {
 
     {
 
-        avcodec_register_all();
+        av_register_all();
         MessageBoxA(NULL, "An exception has occured!", "An exception has occured!", MB_OK | MB_ICONERROR | MB_TASKMODAL);
 
         return 0;

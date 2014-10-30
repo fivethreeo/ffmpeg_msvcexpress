@@ -32,8 +32,6 @@ In msys shell
 .. code-block:: bash
 
     movealib
-    
-    c99convh
 
 Open a cmd shell in the mypeg dir
 
@@ -41,4 +39,4 @@ Open a cmd shell in the mypeg dir
 
     bkl mypeg.bkl
 
-Open the sln in vs201x and build
+Open the sln in vs201x and build # does not work yet
