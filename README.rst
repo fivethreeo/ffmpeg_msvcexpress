@@ -34,9 +34,3 @@ In msys shell
     movealib
 
 Open a cmd shell in the mypeg dir
-
-.. code-block:: bash
-
-    bkl mypeg.bkl
-
-Open the sln in vs201x and build # does not work yet
