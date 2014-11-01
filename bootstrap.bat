@@ -182,14 +182,16 @@ echo alias movelinkback="mv /usr/bin/oldlink /usr/bin/link" >> ffmpeg\.profile
 echo alias movealib="find . -name *.a | sed -e 'p;s/\.a$/.lib/' | xargs -n2 mv" >> ffmpeg\.profile
 echo alias moveliba="find . -name *.lib | sed -e 'p;s/\.lib$/.a/' | xargs -n2 mv" >> ffmpeg\.profile
 
-set INCLUDE=%CD%\msinttypes;%INCLUDE%
+set INCLUDE=%CD%\msinttypes;%CD%\ffmpeg\libavfilter;%CD%\ffmpeg\libavformat;%CD%\ffmpeg;%INCLUDE%
 set PATH=%PATH%;%CD%\yasm%ARCH%;%CD%\c99-to-c89
 
-set HOME=.\ffmpeg\
-echo "Calling %MsysPath%"
-call "%MsysPath%"
+set /P msysstart="Start msys shell? (y/n) "
 
-pause > nul
+if /I "!msysstart!" EQU "Y" (
+  set HOME=.\ffmpeg\
+  echo "Calling %MsysPath%"
+  call "%MsysPath%"
+)   
 
 goto :EOF
 
