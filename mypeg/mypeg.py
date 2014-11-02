@@ -4,6 +4,23 @@
 
 #win32-subsystem=windows;
 
+debug = False
+
+class NoErrorDict(dict):
+
+    def __getitem__(self, key):
+        try: 
+          return dict.__getitem__(self, key)
+        except:
+          return '%%(%s)s' % key
+          
+class StripDict(dict):
+
+    def __getitem__(self, key):
+      return ''
+      
+strip = StripDict()
+
 env = dict(
     LIBDIR="%(DESTDIR)s%(prefix)s/lib",
     SHLIBDIR="%(DESTDIR)s%(prefix)s/bin",
@@ -21,8 +38,8 @@ env = dict(
     LD="link",
     DEPCC="c99wrap cl",
     DEPCCFLAGS="-nologo %(CPPFLAGS)s",
+    DEPCXX="c99wrap cl",
     DEPAS="c99wrap cl",
-    DEPASFLAGS="-nologo %(CPPFLAGS)s",
     YASM="yasm",
     DEPYASM="yasm",
     AR="lib",
@@ -34,7 +51,7 @@ env = dict(
     LN_S="ln -s -f",
     CPPFLAGS=" -D_ISOC99_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_WIN32_WINNT=0x0502 -Dstrtod=avpriv_strtod -Dsnprintf=avpriv_snprintf -D_snprintf=avpriv_snprintf -Dvsnprintf=avpriv_vsnprintf",
     CFLAGS=" -nologo -D_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -Dinline=__inline -FIstdlib.h -Dstrtoll=_strtoi64    -Z7 -W4 -wd4244 -wd4127 -wd4018 -wd4389 -wd4146 -wd4057 -wd4204 -wd4706 -wd4305 -wd4152 -wd4324 -we4013 -wd4100 -wd4214 -wd4554 -wd4273 -wd4701 -O2   -Oy-",
-    CCFLAGS="",
+    CCFLAGS="%(CPPFLAGS)s %(CFLAGS)s",
     CXXFLAGS="  -D__STDC_CONSTANT_MACROS",
     ASFLAGS=" -nologo -D_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -Dinline=__inline -FIstdlib.h -Dstrtoll=_strtoi64  -Z7",
     AS_C="-c",
@@ -53,7 +70,7 @@ env = dict(
     DOXYGEN="doxygen",
     LDFLAGS=" -nologo -debug",
     LDEXEFLAGS="",
-    SHFLAGS="-dll -def:$%(@:%(SLIBSUF)=.def) -implib:%(SUBDIR)s%(SLIBNAME:%(SLIBSUF)s=.lib)",
+    SHFLAGS="-dll -def:%(SOURCE)s:(%(SLIBSUF)s)=.def -implib:%(SUBDIR)s%(SLIBNAME)s:(%(SLIBSUF)s)=.lib",
     ASMSTRIPFLAGS="",
     YASMFLAGS="-f win32  -DPREFIX",
     BUILDSUF="",
@@ -66,12 +83,14 @@ env = dict(
     SLIBSUF=".dll",
     EXESUF=".exe",
     EXTRA_VERSION="",
-    CCDEP="%%(DEP%(TOOL)s)s %%(DEP%(TOOL)sFLAGS)s %%(%(TOOL)sDEP_FLAGS)s %%%%%%%%(SOURCE)s",
-    CXXDEP="",
+    CCDEP="%(DEP%(TOOL)s)s %(DEP%(TOOL)sFLAGS)s %(%(TOOL)sDEP_FLAGS)s %(SOURCE)s",
+    CXXDEP="%(DEP%(TOOL)s)s %(DEP%(TOOL)sFLAGS)s %(%(TOOL)sDEP_FLAGS)s %(SOURCE)s",
     CCDEP_FLAGS="%(CFLAGS)s -showIncludes -Zs",
+    CXXDEP_FLAGS="%(CFLAGS)s -showIncludes -Zs",
     ASDEP="%(DEP%(TOOL)s)s %(DEP%(TOOL)sFLAGS)s %(%(TOOL)sDEP_FLAGS)s",
     ASDEP_FLAGS="%(CPPFLAGS)s %(CFLAGS)s -showIncludes -Zs",
     CC_DEPFLAGS="",
+    CXX_DEPFLAGS="",
     AS_DEPFLAGS="",
     HOSTCC="c99wrap cl",
     HOSTLD="c99wrap cl",
@@ -82,7 +101,7 @@ env = dict(
     HOSTLIBS="-lm",
     DEPHOSTCC="c99wrap cl",
     DEPHOSTCCFLAGS="-nologo %(HOSTCCFLAGS)s",
-    HOSTCCDEP="%%(DEP%(TOOL)s)s %%(DEP%(TOOL)sFLAGS)s %%(%(TOOL)sDEP_FLAGS)s %%%%%%%%(SOURCE)s",
+    HOSTCCDEP="%(DEP%(TOOL)s)s %(DEP%(TOOL)sFLAGS)s %(%(TOOL)sDEP_FLAGS)s %(SOURCE)s",
     HOSTCCDEP_FLAGS="%(CPPFLAGS)s %(CFLAGS)s -showIncludes -Zs",
     HOSTCC_DEPFLAGS="",
     HOSTCC_C="-c",
@@ -102,12 +121,12 @@ env = dict(
     SLIBNAME="%(SLIBPREF)s%(FULLNAME)s%(SLIBSUF)s",
     SLIBNAME_WITH_VERSION="%(SLIBPREF)s%(FULLNAME)s-%(LIBVERSION)s%(SLIBSUF)s",
     SLIBNAME_WITH_MAJOR="%(SLIBPREF)s%(FULLNAME)s-%(LIBMAJOR)s%(SLIBSUF)s",
-    SLIB_CREATE_DEF_CMD="%(SRC_PATH)s/compat/windows/makedef %(SUBDIR)slib%(NAME)s.ver %(OBJS)s > $%(@:%(SLIBSUF)s=.def)",
+    SLIB_CREATE_DEF_CMD="%(SRC_PATH)s/compat/windows/makedef %(SUBDIR)slib%(NAME)s.ver %(OBJS)s > %(SOURCE)s:(%(SLIBSUF)s)=.def",
     SLIB_EXTRA_CMD="",
     SLIB_INSTALL_NAME="%(SLIBNAME_WITH_MAJOR)s",
     SLIB_INSTALL_LINKS="",
-    SLIB_INSTALL_EXTRA_LIB="%(SLIBNAME_WITH_MAJOR:%(SLIBSUF)s=.def)",
-    SLIB_INSTALL_EXTRA_SHLIB="%(SLIBNAME:%(SLIBSUF)s=.lib)",
+    SLIB_INSTALL_EXTRA_LIB="%(SLIBNAME_WITH_MAJOR)s:(%(SLIBSUF)s)=.def",
+    SLIB_INSTALL_EXTRA_SHLIB="%(SLIBNAME)s:(%(SLIBSUF)s)=.lib",
     SAMPLES="%(FATE_SAMPLES)s",
     NOREDZONE_FLAGS="-mno-red-zone"
 )
@@ -155,17 +174,41 @@ libs = [
   "libswscale"
 ]
 
+import re
+def loop_substitute(instring, rounds=3, roundn=1, invars={}):
+  
+  partit = re.finditer("\%\(.*?(?!\%\()(?=\)s|)\)s", instring)
+  outstr = ""
+  lastspan = 0
+  if partit:
+    for match in partit:
+      span = list(match.span())
+      foundstr = instring[span[0]:span[1]]
+      span[0] = span[0] + foundstr.rfind("%(")
+      repstring = instring[span[0]:span[1]]
+      try:
+        repstring = repstring % invars
+      except KeyError:
+        pass
+      outstr += instring[lastspan:span[0]] + repstring
+      lastspan = span[1]
+    outstr += instring[lastspan:]
+    if roundn < rounds:
+      return loop_substitute(outstr, rounds=rounds, roundn=roundn+1, invars=invars)
+    return outstr
+  
 def make_dep_cmd(TOOL):
-  tool_cmd = env['%sDEP' % TOOL] % dict(TOOL=TOOL)
-  tool_cmd = tool_cmd % env
-  tool_cmd = tool_cmd % env
-  return tool_cmd
+  tool_cmd = loop_substitute(env['%sDEP' % TOOL], invars=dict(TOOL=TOOL))
+  return loop_substitute(tool_cmd, invars=env)
   
 def make_compile_cmd(TOOL):
-  tool_cmd = "%%(%(TOOL)s)s %%(%(TOOL)sFLAGS)s %%(%(TOOL)s_DEPFLAGS)s %%(%(TOOL)s_C)s %%(%(TOOL)s_O)s %%%%(SOURCE)s" % dict(TOOL=TOOL)
-  tool_cmd = tool_cmd % env
-  return tool_cmd
+  tool_cmd = loop_substitute("%(%(TOOL)s)s %(%(TOOL)sFLAGS)s %(%(TOOL)s_DEPFLAGS)s %(%(TOOL)s_C)s %(%(TOOL)s_O)s %(SOURCE)s", invars=dict(TOOL=TOOL))
+  return loop_substitute(tool_cmd, invars=env)
 
 #CMDS = 
 print make_dep_cmd('CC')
 print make_compile_cmd('CC')
+print make_dep_cmd('CXX')
+print make_compile_cmd('CXX')
+print make_dep_cmd('AS')
+print make_compile_cmd('AS')
