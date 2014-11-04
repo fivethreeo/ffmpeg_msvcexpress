@@ -31,7 +31,7 @@ env = dict(
         CPPFLAGS=" -D_ISOC99_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_WIN32_WINNT=0x0502 -Dstrtod=avpriv_strtod -Dsnprintf=avpriv_snprintf -D_snprintf=avpriv_snprintf -Dvsnprintf=avpriv_vsnprintf",
         CFLAGS=" -nologo -D_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -Dinline=__inline -FIstdlib.h -Dstrtoll=_strtoi64        -Z7 -W4 -wd4244 -wd4127 -wd4018 -wd4389 -wd4146 -wd4057 -wd4204 -wd4706 -wd4305 -wd4152 -wd4324 -we4013 -wd4100 -wd4214 -wd4554 -wd4273 -wd4701 -O2     -Oy-",
         CCFLAGS="%(CPPFLAGS)s %(CFLAGS)s",
-        CXXFLAGS="    -D__STDC_CONSTANT_MACROS",
+        CXXFLAGS=" -D__STDC_CONSTANT_MACROS",
         ASFLAGS=" -nologo -D_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -Dinline=__inline -FIstdlib.h -Dstrtoll=_strtoi64    -Z7",
         AS_C="-c",
         AS_O="-Fo%(ARCHIVE)s",
@@ -91,7 +91,7 @@ env = dict(
         TARGET_SAMPLES="%(SAMPLES)s",
         CFLAGSffplay="",
         ZLIB="zlib.lib",
-        LIB_INSTALL_EXTRA_CMD='$%(RANLIB)s "%(LIBDIR)s/%(LIBNAME)s"',
+        LIB_INSTALL_EXTRA_CMD='%(RANLIB)s "%(LIBDIR)s/%(LIBNAME)s"',
         EXTRALIBS="vfw32.lib user32.lib gdi32.lib psapi.lib ole32.lib strmiids.lib uuid.lib ws2_32.lib psapi.lib advapi32.lib shell32.lib ",
         COMPAT_OBJS=" strtod.o msvcrt/snprintf.o",
         EXEOBJS="",
@@ -116,32 +116,12 @@ sources = [
 
 includedirs = [
     "../ffmpeg",
-    "../ffmpeg/libavcodec",
-    "../ffmpeg/libavdevice",
-    "../ffmpeg/libavfilter",
-    "../ffmpeg/libavformat",
-    "../ffmpeg/libavresample",
-    "../ffmpeg/libavutil",
-    "../ffmpeg/libpostproc",
-    "../ffmpeg/libswresample",
-    "../ffmpeg/libswscale"
 ]
-        
+
 includedirs += [
     "../msinttypes"
 ]
 
-libdirs = [
-    "../ffmpeg/libavcodec",
-    "../ffmpeg/libavdevice",
-    "../ffmpeg/libavfilter",
-    "../ffmpeg/libavformat",
-    "../ffmpeg/libavresample",
-    "../ffmpeg/libavutil",
-    "../ffmpeg/libpostproc",
-    "../ffmpeg/libswresample",
-    "../ffmpeg/libswscale"
-]
         
 libs = [
     "libavcodec",
@@ -153,9 +133,10 @@ libs = [
     "libswscale"
 ]
 
-print make_dep_cmd('CC', env)
-print make_compile_cmd('CC', env)
-print make_dep_cmd('CXX', env)
-print make_compile_cmd('CXX', env)
-print make_dep_cmd('AS', env)
-print make_compile_cmd('AS', env)
+libdirs = ['../ffmpeg/%s' % lib for lib in libs]
+
+builder = MagPy(deps=['CC', 'CXX', 'AS'], compilers=['CC', 'CXX', 'AS'], env=env, debug=True)
+
+builder.compile(sources, "^(?P<dir>src\/)(?P<stem>.*?)(?P<ext>\.cpp)$", "%(dir)s%(stem)s.o", 'CXX')
+
+builder.link_exe(['one.o','two.o'], 'combined')

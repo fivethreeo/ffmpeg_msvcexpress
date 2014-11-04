@@ -1,6 +1,7 @@
 @echo off
-Setlocal EnableDelayedExpansion
+setlocal EnableDelayedExpansion
 
+if 1==0 (
 echo When the msys shell appears do:
 echo.
 echo movelink 
@@ -25,6 +26,8 @@ echo http://www.microsoft.com/en-us/download/details.aspx?id=8279
 echo and
 echo http://www.microsoft.com/en-us/download/details.aspx?id=4422
 echo.
+
+)
 
 rem -------------------------------------------------------------------------
 rem To build clang if needed
@@ -147,8 +150,10 @@ goto :EOF
     )
    
     if defined COMNTOOLS (
+      endlocal
       echo "Calling %COMNTOOLS%vsvars32.bat"
-      call "%COMNTOOLS%vsvars32.bat" > nul
+      call "%COMNTOOLS%vsvars32.bat" > nul'
+      setlocal
       echo.
     ) else (
       echo Microsft Visual Studio not found
@@ -167,7 +172,9 @@ goto STARTMSYS
     pause > nul
   )
   echo "Calling C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd /x64"
+  endlocal
   call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64 > nul
+  setlocal
   echo.
   set TARGETOS=win64
   set TARGETARCH=i686
@@ -182,8 +189,10 @@ echo alias movelinkback="mv /usr/bin/oldlink /usr/bin/link" >> ffmpeg\.profile
 echo alias movealib="find . -name *.a | sed -e 'p;s/\.a$/.lib/' | xargs -n2 mv" >> ffmpeg\.profile
 echo alias moveliba="find . -name *.lib | sed -e 'p;s/\.lib$/.a/' | xargs -n2 mv" >> ffmpeg\.profile
 
-set INCLUDE=%CD%\msinttypes;%CD%\ffmpeg\libavfilter;%CD%\ffmpeg\libavformat;%CD%\ffmpeg;%INCLUDE%
+set INCLUDE=%CD%\msinttypes;%CD%\ffmpeg;%INCLUDE%
 set PATH=%PATH%;%CD%\yasm%ARCH%;%CD%\c99-to-c89
+
+Setlocal
 
 set /P msysstart="Start msys shell? (y/n) "
 
@@ -192,6 +201,7 @@ if /I "!msysstart!" EQU "Y" (
   echo "Calling %MsysPath%"
   call "%MsysPath%"
 )   
+endlocal
 
 goto :EOF
 
