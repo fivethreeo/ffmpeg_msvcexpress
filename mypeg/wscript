@@ -1,0 +1,7 @@
+def configure(conf):
+    conf.env['MSVC_VERSIONS'] = ['10.0Exp']
+    conf.env['MSVC_TARGETS'] = ['x86_arm']
+    conf.load('msvc')
+    
+def build(bld):
+    tg = bld.program(source='src/mypeg.cpp', target='mypeg', use='KERNEL32 USER32 GDI32')
