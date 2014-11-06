@@ -1,7 +1,85 @@
+import sys
+import os
+#run with --qtdir="C:\Qt\5.3\msvc2012_opengl"
+
+
+ffmpeg_libs = [
+  'swscale',
+  'swresample',
+  'avdevice',
+  'avformat',
+  'avcodec',
+  'avutil'
+]
+
+QT5_LIBS = '''
+qtmain
+QtBluetooth
+QtCLucene
+QtConcurrent
+QtCore
+QtDBus
+QtDeclarative
+QtDesignerComponents
+QtDesigner
+QtGui
+QtHelp
+QtMultimediaQuick_p
+QtMultimedia
+QtMultimediaWidgets
+QtNetwork
+QtNfc
+QtOpenGL
+QtPositioning
+QtPrintSupport
+QtQml
+QtQuickParticles
+QtQuick
+QtQuickTest
+QtScript
+QtScriptTools
+QtSensors
+QtSerialPort
+QtSql
+QtSvg
+QtTest
+QtWebKit
+QtWebKitWidgets
+QtWidgets
+QtWinExtras
+QtX11Extras
+QtXmlPatterns
+QtXml'''.split()
+
+def options(opt):
+		opt.load('qt5 cxx msvc')
+
 def configure(conf):
-    conf.env['MSVC_VERSIONS'] = ['10.0Exp']
-    conf.env['MSVC_TARGETS'] = ['x86_arm']
-    conf.load('msvc')
+    conf.qt5_vars = QT5_LIBS
+
+    conf.load('qt5 cxx msvc')
+    conf.env['MSVC_TARGETS'] = ['x86']
+    conf.env.prepend_value('INCLUDES', '../../msinttypes')
     
+    
+    conf.env.LIB_ADVAPI32 = 'advapi32'
+    conf.env.LIB_WS2_32 = 'ws2_32'
+    conf.env.LIB_KERNEL32 = 'kernel32'
+    conf.env.LIB_USER32 = 'user32'
+    conf.env.LIB_GDI32 = 'gdi32'
+    
+    if sys.platform == 'win32':
+        conf.env.INCLUDES_FFMPEG  = ['../../ffmpeg']
+
+        for lib in ffmpeg_libs:
+            setattr(conf.env, 'LIBPATH_%s'  % lib.upper(), '../../ffmpeg/lib%s' % lib)
+            # setattr(conf.env, 'LIB_%s'  % lib.upper(), 'lib%s' % lib)
+          
 def build(bld):
-    tg = bld.program(source='src/mypeg.cpp', target='mypeg', use='KERNEL32 USER32 GDI32')
+    ffmepg_libs_upper = ' '.join(l.upper() for l in ffmpeg_libs)
+    tg = bld(
+       features='qt5 cxx msvc',
+       source='main.cpp mainwindow.ui mainwindow.cpp',
+       target='mypeg',
+       use='QTCORE QTGUI QTWIDGETS FFMPEG %s' % ffmepg_libs_upper
+    )
