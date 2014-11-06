@@ -221,3 +221,4 @@ yasm*/
 c99-to-c89/
 zlib/
 mypeg/waf/
+!mypeg.pro.user

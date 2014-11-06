@@ -1,0 +1,33 @@
+import sys
+
+ffmpeg_libs = [
+  'swscale',
+  'swresample',
+  'avdevice',
+  'avformat',
+  'avcodec',
+  'avutil'
+]
+
+def configure(conf):
+
+    conf.load('msvc')
+    conf.env['MSVC_TARGETS'] = ['x86']
+    conf.env.prepend_value('INCLUDES', '../../msinttypes')
+    
+    conf.env.LIB_ADVAPI32 = 'advapi32'
+    conf.env.LIB_WS2_32 = 'ws2_32'
+    conf.env.LIB_KERNEL32 = 'kernel32'
+    conf.env.LIB_USER32 = 'user32'
+    conf.env.LIB_GDI32 = 'gdi32'
+    
+    if sys.platform == 'win32':
+        conf.env.INCLUDES_FFMPEG  = ['../../ffmpeg']
+
+        for lib in ffmpeg_libs:
+            setattr(conf.env, 'LIBPATH_%s'  % lib.upper(), '../../ffmpeg/lib%s' % lib)
+            # setattr(conf.env, 'LIB_%s'  % lib.upper(), 'lib%s' % lib)
+          
+def build(bld):
+    ffmepg_libs_upper = ' '.join(l.upper() for l in ffmpeg_libs)
+    tg = bld.program(source='src/mypeg.cpp', target='mypeg', use='KERNEL32 USER32 GDI32 ADVAPI32 WS2_32 FFMPEG %s' % ffmepg_libs_upper)
