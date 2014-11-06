@@ -52,21 +52,23 @@ QtXmlPatterns
 QtXml'''.split()
 
 def options(opt):
-		opt.load('qt5 cxx msvc')
+    opt.load('cxx msvc qt5')
 
 def configure(conf):
     conf.qt5_vars = QT5_LIBS
 
-    conf.load('qt5 cxx msvc')
+    conf.load('cxx msvc qt5')
     conf.env['MSVC_TARGETS'] = ['x86']
     conf.env.prepend_value('INCLUDES', '../../msinttypes')
-    
-    
+    conf.env.prepend_value('INCLUDES', 'build')
+
+    """
     conf.env.LIB_ADVAPI32 = 'advapi32'
     conf.env.LIB_WS2_32 = 'ws2_32'
     conf.env.LIB_KERNEL32 = 'kernel32'
     conf.env.LIB_USER32 = 'user32'
     conf.env.LIB_GDI32 = 'gdi32'
+    """
     
     if sys.platform == 'win32':
         conf.env.INCLUDES_FFMPEG  = ['../../ffmpeg']
@@ -77,7 +79,7 @@ def configure(conf):
           
 def build(bld):
     ffmepg_libs_upper = ' '.join(l.upper() for l in ffmpeg_libs)
-    tg = bld(
+    tg = bld.program(
        features='qt5 cxx msvc',
        source='main.cpp mainwindow.ui mainwindow.cpp',
        target='mypeg',
