@@ -19,18 +19,8 @@ Once the msys shell is started
 
     alias # to see the provided utils
 
-    movelink # to use the correct link
-
     fconfigure # to run configure with the correct flags, this takes time
     
     make 
-
-To build the provided small app
-
-In msys shell
-
-.. code-block:: bash
-
-    movealib
 
 Open a cmd shell in the mypeg dir

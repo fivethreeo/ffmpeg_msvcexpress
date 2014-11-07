@@ -18,7 +18,6 @@ QtBluetooth
 QtCLucene
 QtConcurrent
 QtCore
-QtDBus
 QtDeclarative
 QtDesignerComponents
 QtDesigner
@@ -47,7 +46,6 @@ QtWebKit
 QtWebKitWidgets
 QtWidgets
 QtWinExtras
-QtX11Extras
 QtXmlPatterns
 QtXml'''.split()
 
@@ -61,6 +59,8 @@ def configure(conf):
     conf.env['MSVC_TARGETS'] = ['x86']
     conf.env.prepend_value('INCLUDES', '../../msinttypes')
     conf.env.prepend_value('INCLUDES', 'build')
+
+    conf.env.LIB_QT5 = ["Qt5%s" % l[2:] for l in QT5_LIBS]
 
     """
     conf.env.LIB_ADVAPI32 = 'advapi32'
@@ -83,5 +83,5 @@ def build(bld):
        features='qt5 cxx msvc',
        source='main.cpp mainwindow.ui mainwindow.cpp',
        target='mypeg',
-       use='QTCORE QTGUI QTWIDGETS FFMPEG %s' % ffmepg_libs_upper
+       use='QT5 QTCORE QTGUI QTWIDGETS FFMPEG %s' % ffmepg_libs_upper
     )

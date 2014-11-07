@@ -1,6 +1,18 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+echo "%PROCESSOR_ARCHITECTURE%" | C:\Windows\System32\findstr "64" > nul 2>&1
+
+if %ERRORLEVEL% == 0 (
+    echo Found arch 64
+) else if %ERRORLEVEL% == 1 (
+    echo Found arch 32
+) else (
+    echo Found arch 32
+)
+
+set ERRORLEVEL=
+
 if 1==0 (
 echo When the msys shell appears do:
 echo.
@@ -16,17 +28,6 @@ echo.
 echo movelinkback
 echo To make link the regular link again
 echo.
-echo Utils
-echo movealib
-echo moveliba
-echo To rename a to lib and vice versa
-echo.
-echo For 64bit builds using vs express 2010 install:
-echo http://www.microsoft.com/en-us/download/details.aspx?id=8279
-echo and
-echo http://www.microsoft.com/en-us/download/details.aspx?id=4422
-echo.
-
 )
 
 rem -------------------------------------------------------------------------
