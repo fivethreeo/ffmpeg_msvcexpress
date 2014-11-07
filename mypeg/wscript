@@ -59,6 +59,7 @@ def configure(conf):
     conf.env['MSVC_TARGETS'] = ['x86']
     conf.env.prepend_value('INCLUDES', '../../msinttypes')
     conf.env.prepend_value('INCLUDES', 'build')
+    conf.env.LIB_QT5 = ['Qt5%s' % l[2:] for l in QT5_LIBS[1:]]
 
     conf.env.LIB_QT5 = ["Qt5%s" % l[2:] for l in QT5_LIBS]
 
@@ -80,7 +81,7 @@ def configure(conf):
 def build(bld):
     ffmepg_libs_upper = ' '.join(l.upper() for l in ffmpeg_libs)
     tg = bld.program(
-       features='qt5 cxx msvc',
+       features='qt5',
        source='main.cpp mainwindow.ui mainwindow.cpp',
        target='mypeg',
        use='QT5 QTCORE QTGUI QTWIDGETS FFMPEG %s' % ffmepg_libs_upper
